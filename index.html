@@ -146,6 +146,9 @@ video.mainv{width:100%;border-radius:10px;background:#000}
 .mini .mi small{color:var(--grey);font-size:11px;display:block;line-height:1.35}
 .mini .mi .dn{color:var(--green);font-size:11px}
 @media(max-width:1020px){.wgrid{flex-direction:column}.rcol{width:100%}}
+/* 지식 강의실 — 사이드 탭에서 강의실 안 iframe 으로 연다 (261006) */
+.kview{margin:-22px -30px -60px;height:calc(100vh - 60px)}
+.kview iframe{width:100%;height:100%;border:0;display:block;background:var(--bg)}
 @media(max-width:860px){.side{display:none}}
 </style></head><body>
 <div class="topbar">
@@ -162,12 +165,13 @@ video.mainv{width:100%;border-radius:10px;background:#000}
     <div class="sitem chMu" data-f="음악" onclick="setF('음악')"><span class="sic">♪</span>음악</div>
     <div class="sdiv"></div>
     <div class="stitle">링크</div>
-    <a class="sitem lnk2" href="https://okhyun304-dot.github.io/action100/" target="_blank"><span class="sic">↗</span>행동100</a><a class="sitem lnk2" href="https://blog.naver.com/guraud22" target="_blank"><span class="sic">↗</span>행동주의자 블로그</a><div class="sdiv"></div><div class="stitle">지식 강의실 (테스트)</div><a class="sitem lnk2" href="https://okhyun304-dot.github.io/action-class/지식/" target="_blank"><span class="sic">◈</span>행동지식 강의실</a><a class="sitem lnk2" href="https://okhyun304-dot.github.io/action-class/지식/sketch/" target="_blank"><span class="sic">◈</span>스터츠 판서실</a>
+    <a class="sitem lnk2" href="https://okhyun304-dot.github.io/action100/" target="_blank"><span class="sic">↗</span>행동100</a><a class="sitem lnk2" href="https://blog.naver.com/guraud22" target="_blank"><span class="sic">↗</span>행동주의자 블로그</a><div class="sdiv"></div><div class="stitle">지식 강의실 (테스트)</div><div class="sitem" data-f="k0" onclick="openK(0)"><span class="sic">◈</span>행동지식 강의실</div><div class="sitem" data-f="k1" onclick="openK(1)"><span class="sic">◈</span>스터츠 판서실</div>
   </aside>
   <main class="main">
     <div id="hero"></div>
     <div class="overall"><div class="obar"><i id="obar"></i></div><span id="otext"></span></div>
     <div id="sections"></div>
+    <div id="kview" class="kview hide"><iframe id="kframe" title="지식 강의실" allow="fullscreen"></iframe></div>
   </main>
 </div>
 <div id="watch" class="watch hide">
@@ -210,7 +214,14 @@ function save(){localStorage.setItem('prog2',JSON.stringify(P))}
 function pct(e){const p=P[e.src];if(!p)return 0;if(p.done)return 100;return Math.min(99,Math.round(p.t/e.dur*100))}
 function fmt(t){t=Math.round(t);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')}
 function avCls(ch){return ch==='행동주의자'?'chB':(ch==='음악'?'chMu':'chM')}
-function setF(f){F=f;renderHome();
+const KL=[["행동지식 강의실", "https://okhyun304-dot.github.io/action-class/지식/"], ["스터츠 판서실", "https://okhyun304-dot.github.io/action-class/지식/sketch/"]];
+function openK(i){F='k'+i;player.pause();
+  document.getElementById('watch').classList.add('hide');document.getElementById('home').classList.remove('hide');
+  ['hero','sections'].forEach(id=>document.getElementById(id).classList.add('hide'));document.querySelector('.overall').classList.add('hide');
+  const kv=document.getElementById('kview');kv.classList.remove('hide');
+  const f=document.getElementById('kframe');if(f.dataset.u!==KL[i][1]){f.src=KL[i][1];f.dataset.u=KL[i][1];}
+  document.querySelectorAll('.side .sitem[data-f]').forEach(el=>el.classList.toggle('on',el.dataset.f===F));window.scrollTo(0,0);}
+function setF(f){F=f;document.getElementById('kview').classList.add('hide');['hero','sections'].forEach(id=>document.getElementById(id).classList.remove('hide'));document.querySelector('.overall').classList.remove('hide');renderHome();
   document.querySelectorAll('.side .sitem[data-f]').forEach(el=>el.classList.toggle('on',el.dataset.f===f));
   window.scrollTo(0,0);}
 function card(e){
@@ -301,7 +312,7 @@ function openEp(key,push){
   localStorage.setItem('last',key);window.scrollTo(0,0);
   if(push!==false)history.pushState({key:key},'','#'+encodeURIComponent(key));
 }
-function goHome(push){player.pause();document.getElementById('watch').classList.add('hide');document.getElementById('home').classList.remove('hide');renderHome();window.scrollTo(0,0);
+function goHome(push){player.pause();document.getElementById('watch').classList.add('hide');document.getElementById('home').classList.remove('hide');if(F&&F[0]==='k'){openK(+F.slice(1));}else{renderHome();}window.scrollTo(0,0);
   if(push!==false)history.pushState(null,'',location.pathname+location.search);}
 window.addEventListener('popstate',e=>{const k=e.state&&e.state.key;if(k)openEp(k,false);else goHome(false)});
 function tab(t){['C','N','S'].forEach(x=>{document.getElementById('tab'+x).classList.toggle('on',x===t);document.getElementById('pane'+x).classList.toggle('hide',x!==t)})}
