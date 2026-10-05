@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fa">
+  <title>행동지식 강의실</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./library-data.js" defer></script>
+  <script src="./content.js" defer></script>
+  <script src="./more-content.js" defer></script>
+  <script src="./editorial-content.js" defer></script>
+  <script src="./ebook-content.js" defer></script>
+  <script src="./ebook-diagrams.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="행동지식 강의실 메인"><span class="brand-icon" aria-hidden="true">◈</span><span>행동지식 <b>강의실</b><small>KNOWLEDGE CLASSROOM</small></span></a>
+    <span class="header-meta"><i></i> 칼럼 13편 · 도해 전자책 6편 · 원자료 179편</span>
+  <a class="report-switch" href="./sketch/index.html">스터츠 판서실 ↗</a>
+  </header>
+
+  <main id="home-view" class="home-view">
+    <div class="home-intro"><span class="eyebrow">LEARN THE STRUCTURE</span><h1>복잡한 지식을, 보이는 구조로.</h1><p>행동주의자 강의에서 반복되는 핵심 개념을 칼럼과 움직이는 도식으로 엮었습니다. 카드마다 독립된 강의실로 들어갈 수 있습니다.</p></div>
+    <div class="featured-heading"><div><span class="eyebrow">COLUMNS &amp; DRAWN EBOOK</span><h2>칼럼 13편 · 도해 전자책 6편</h2></div><a href="#library-heading">강의 원자료 색인 179편 보기 ↓</a></div>
+    <div id="filters" class="filters" role="group" aria-label="강의 주제 필터"></div>
+    <div id="card-grid" class="card-grid" aria-label="강의 목록"></div>
+    <section class="library-section" aria-labelledby="library-heading">
+      <div class="library-heading"><div><span class="eyebrow">SOURCE INDEX</span><h2 id="library-heading">강의 원자료 색인 <span id="library-total"></span></h2><p>원자료는 칼럼 집필을 위한 강의 요약입니다. 칼럼이 완성된 항목에는 ‘칼럼 읽기’를 표시했습니다.</p></div><label class="library-search">강의 찾기<input id="library-query" type="search" placeholder="제목·핵심주제 검색" autocomplete="off"></label></div>
+      <div id="library-count" class="library-count" aria-live="polite"></div>
+      <div id="library-grid" class="library-grid"></div>
+      <button type="button" id="library-more" class="library-more">강의 더 보기 ↓</button>
+    </section>
+    <footer class="home-footer">칼럼은 강의 전사와 요약을 바탕으로 새로 집필한 글입니다. 원자료와 구분해 표시합니다. · 공개 전 원문 교정 및 사용 권한 확인 필요</footer>
+  </main>
+
+  <main id="lesson-view" class="lesson-view" hidden>
+    <div class="lesson-breadcrumb"><a href="#home">← 전체 강의</a><span>/</span><span id="breadcrumb-title"></span></div>
+    <header class="article-header"><span id="article-category" class="eyebrow"></span><h1 id="article-title"></h1><p id="article-deck"></p><div id="article-tags" class="article-tags"></div></header>
+    <div class="reading-layout">
+      <nav id="toc" class="toc" aria-label="이 강의의 목차"></nav>
+      <article id="article" class="article"></article>
+      <aside class="visual-aside" aria-label="읽는 내용과 함께 움직이는 도식">
+        <div class="visual-sticky"><div class="visual-header"><span>움직이는 도식</span><span id="visual-counter"></span></div><div id="detail-visual" class="detail-visual"></div><div class="visual-caption"><strong id="visual-title"></strong><p id="visual-description"></p></div><div id="visual-controls" class="visual-controls"><button type="button" id="visual-prev" aria-label="이전 도식 장면">←</button><button type="button" id="visual-play">▷ 자동 재생</button><button type="button" id="visual-next" aria-label="다음 도식 장면">→</button></div><p id="visual-help" class="visual-help">글을 내려 읽으면 해당 장면으로 도식이 이동합니다.</p></div>
+      </aside>
+    </div>
+    <div class="next-lesson" id="next-lesson"></div>
+  </main>
+</body>
+</html>
