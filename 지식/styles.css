@@ -89,3 +89,6 @@ body{background:#0e0f11;color:#e9ebee}
 .lesson-card:has(.ebook-visual) .card-category{border-color:#2a2e35;color:#3ecf8e}
 a:focus-visible,button:focus-visible{outline-color:#4aa3e8}
 @media(max-width:700px){.toc button{border-bottom-color:#2a2e35}.toc button.active{border-bottom-color:#4aa3e8}}
+
+/* 261006 고정 패널 수정: grid align-items:start 라서 aside·toc 높이가 내용만큼이라 sticky 가 안 붙던 문제 — 행 높이로 늘린다 */
+@media(min-width:1051px){.reading-layout .visual-aside,.reading-layout .toc{align-self:stretch}}
