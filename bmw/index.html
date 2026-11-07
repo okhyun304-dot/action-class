@@ -123,6 +123,16 @@ textarea:focus{outline:none;border-color:var(--ac)}textarea::placeholder{color:v
 .public .screen{font-size:clamp(24px,2.8vw,36px)}
 @media(max-width:900px){.wide .grid{grid-template-columns:1fr}}
 @media(max-width:600px){.cardscr,.aud{padding:22px 18px;min-height:260px}.cab{grid-template-columns:1fr}.stage.audmode,.stage.cardmode{min-height:260px}.mat .ath{width:60px;height:34px}}
+.cc.quiz{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.cc.quiz li{padding:0;background:none;border:0}.cc.quiz li::before{display:none}
+.qb{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;border:1px solid var(--line2);border-radius:9px;padding:13px 14px;background:#16161c;font-size:15.5px;font-weight:600;transition:background .15s,border-color .15s}
+.qb:hover{border-color:var(--ac)}.qm{font-size:12px;font-weight:700;flex:none}
+.qw{display:none;font-size:14px;line-height:1.6;color:#d8d8e0;padding:10px 4px 2px}
+li.open .qw{display:block}
+li.ok .qb{border-color:#22c55e;background:rgba(34,197,94,.12)}li.ok .qm{color:#4ade80}
+li.no .qb{border-color:#f87171;background:rgba(248,113,113,.10);color:#d4d4dc}li.no .qm{color:#fca5a5}
+.qall{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.qsum{display:none;font-size:14.5px;font-weight:600;color:#c4b5fd}.qsum.show{display:inline}
+.mats,.learn{display:none!important}
 </style></head><body>
 <div class="wrap">
 <div class="top"><div class="brand"><b>BMW 강의</b>11월 3일, 대장님은 무엇을 보셨을까 · 2026.11.08</div><div class="tools"><button class="btn" id="modeBtn" onclick="toggleMode()">발표 화면</button><a class="btn" href="https://okhyun304-dot.github.io/action-class/" target="_parent">강의 아카이브 ↗</a></div></div>
@@ -180,21 +190,21 @@ const STAGES=[{"time": "13:37~14:08 | 잠원 → 신사동", "name": "1장 · �
 // 따옴표 “ ” 안은 그날 실제 녹음·강의록 원문 그대로. 가정 상황·정리는 그렇게 표시.
 const STORY=[
  [ {k:'장면',id:'133149',screen:'11월 3일 오후 1시 반. 잠원에서 신사동까지, 대장님과 걸었습니다.',say:'제가 잠원동, 반포동을 그냥 비슷한 동네로 생각했는데, 대장님은 걷는 내내 다른 걸 보고 계셨어요.'},
-   {k:'맞혀보기',card:{q:'같은 길을 걸었는데, 대장님은 무엇을 보고 계셨을까요?',choices:['건물의 높이와 밀도','동네 이름이 주는 반응','거리를 걷는 사람들','이 땅의 값']},say:'멤버 답을 두세 개 듣고 넘어간다. 정답은 없다 — 전부 보셨다.'},
+   {k:'맞혀보기',card:{q:'같은 길을 걸었는데, 대장님은 무엇을 보고 계셨을까요?',quiz:true,choices:[{t:'건물의 높이와 밀도',ok:true,why:'“압축률로 따지면 진짜 RAR도 아니고 ZIP도 아니에요.” 땅이 비싸니까 위로 올리고 또 올린 걸 보고 값을 유추하셨습니다.'},{t:'동네 이름이 주는 반응',ok:true,why:'“반포라고 하면 알아요.” 잠원이라고 하면 모르고, 반포라고 하면 반응이 달라집니다. 이름 자체가 상징이라는 이야기 → 16편.'},{t:'그 동네에 사는 사람들',ok:true,why:'“누구 봤다고 해서 신기해하는 게 아니라, 저 사람들 여기 왜 있지? 얼마가 있을까?를 역산해 보는 겁니다.”'},{t:'이 땅의 값',ok:true,why:'“그러면 우리가 걸었던 그 길이 얼마나 비싸겠습니까.” 걸어 본 거리와 아는 거리를 비교해서 값을 짐작하셨습니다.'}],all:'전부 정답 — 같은 길에서 대장님은 네 가지를 한꺼번에 보고 계셨습니다.'},say:'멤버가 하나씩 눌러 보게 한다. 정답이 여러 개라는 게 포인트.'},
    {k:'그날 현장',id:'V_A1',screen:'실제로 걸으며 나눈 말 — 13시 57분',say:'영상은 1~2분만 틀고 멈춰도 된다.'},
    {k:'만화',ep:16,screen:'이름 하나에 반응이 달라진다',say:'“반포”라고 하면 아는데 “잠원”이라고 하면 모르는 장면.'},
    {k:'만화',ep:3,screen:'걸어 봐야 땅이 보인다'},
    {k:'대장님의 답',id:'A02',screen:'“본인이 걸어 봐야 감이 잡혀요.”',say:'택시로 다니면 여기와 거기가 머릿속에서 연결이 안 된다는 말씀으로 정리.'},
    {k:'우리 이야기',card:{q:'내가 매일 지나가지만, 한 번도 이유를 생각해 보지 않은 것은?'},say:'두세 명에게 짧게 듣고 다음 장면으로.'} ],
  [ {k:'장면',id:'141005',screen:'엉클조. 소시지집인데, 대장님은 맥주부터 시키셨습니다.',say:'저는 맥주가 그냥 시원하면 되는 줄 알았어요.'},
-   {k:'딜레마',card:{q:'세계에서 가장 맛있는 맥주를 만들면, 한국에서도 반드시 잘 팔릴까요?',choices:['잘 팔린다','안 팔린다','조건이 있다']},say:'손을 들게 해서 갈리게 만든다.'},
+   {k:'딜레마',card:{q:'세계에서 가장 맛있는 맥주를 만들면, 한국에서도 반드시 잘 팔릴까요?',quiz:true,choices:[{t:'잘 팔린다',ok:false,why:'맛만으로는 부족합니다. 대장님은 품질보다 “맥주를 어떤 상황에서, 왜 마시느냐”를 먼저 보셨습니다.'},{t:'안 팔린다',ok:false,why:'수제맥주가 1년 안에 망한다고 하셨지만, 이유는 맛이 없어서가 아니었습니다.'},{t:'조건이 있다',ok:true,why:'“한국이라는 나라에서 맥주는 안주이기 때문입니다.” 고객이 맥주를 소비하는 상황과 목적이 맞아야 팔립니다.'}]},say:'손을 들게 해서 갈리게 만든 뒤 하나씩 눌러 공개.'},
    {k:'맥주 1분 공부',id:'beer',screen:'필스너 · 바이스비어 · 스타우트',say:'에일과 라거의 차이, 효모가 만드는 향만 짧게.'},
    {k:'그날 현장',id:'V_A2',screen:'잔이 맛을 바꾼다 — 14시 19분'},
    {k:'대장님의 답',id:'A04',screen:'“한국이라는 나라에서 맥주는 안주이기 때문입니다.”',say:'수제맥주가 1년 안에 망한다고 하셨던 이유. 품질보다 소비하는 상황과 목적.'},
    {k:'만화',ep:11,screen:'수요 없는 공급'},
    {k:'우리 이야기',card:{q:'내 고객은 제품 자체보다 어떤 상황과 목적을 사고 있을까?'}} ],
  [ {k:'장면',id:'1crgIxdlpqs',screen:'문 하나 여는데, 왜 이렇게 오래 보여줄까요?',say:'“여러분, 게임을 하다가 문을 열면 화면이 바뀌면서 문이 천천히 열립니다.” 영상은 10~20초만.'},
-   {k:'맞혀보기',card:{q:'제작자는 왜 이렇게 만들었을까요?',choices:['공포감을 주려고','제작자가 일부러','돈이 없어서','다른 이유가 있다']},say:'“지난 화요일 대장님과 게임 이야기를 하다가 이 장면이 나왔습니다. 그런데 저는 이유를 전혀 몰랐습니다.” 답을 먼저 말하지 않는다.'},
+   {k:'맞혀보기',card:{q:'제작자는 왜 이렇게 만들었을까요?',quiz:true,choices:[{t:'공포감을 주려고',ok:false,why:'결과적으로 긴장감은 생겼지만, 처음 목적은 아니었습니다.'},{t:'제작자가 일부러',ok:true,why:'“저기서 누가 저걸 저렇게 해둔 거잖아요.” 일부러 맞습니다. 다만 목적이 공포가 아니었죠.'},{t:'돈이 없어서',ok:false,why:'돈 문제가 아니라 그 시절 기술의 한계 문제였습니다.'},{t:'다른 이유가 있다',ok:true,why:'“그걸 문 여는 모션으로 하면서 시간을 버는 겁니다.” 다음 방을 불러오는(로딩) 시간을 문 열리는 장면으로 가린 것.'}]},say:'“지난 화요일 대장님과 게임 이야기를 하다가 이 장면이 나왔습니다. 그런데 저는 이유를 전혀 몰랐습니다.” 답을 먼저 말하지 않는다.'},
    {k:'대장님의 답',id:'A08',screen:'“그걸 문 여는 모션으로 하면서 시간을 버는 겁니다.”',say:'처음엔 로딩을 감추기 위한 기술적 해결책.'},
    {k:'반전',card:{q:'로딩을 감추던 장치가, 시리즈의 문법이 됐다',ab:['처음: 기술이 모자라 시간을 벌던 장면','“지금은 사실 기술이 좋아졌는데도 이렇게 엽니다.”']},say:'제약이 연출의 언어가 된 사례.'},
    {k:'만화·영상',ep:9,screen:'기술의 제약이 문법이 된다'},
@@ -211,7 +221,7 @@ const STORY=[
    {k:'대장님의 답',id:'A12',screen:'“아이언돔을 쳐주는 건 남자 역할인 것 같아요.”'},
    {k:'만화',ep:30,screen:'아이언돔'},
    {k:'우리 이야기',card:{q:'되돌릴 수 없고, 그 뒤로 내 기준이 달라진 경험이 있나요?',note:'말하기 부담스러우면 답하지 않아도 됩니다'}} ],
- [ {k:'반전',card:{q:'같은 날 하신 두 말씀입니다. 모순일까요?',ab:['“매일 보여줘야 되는데, 이게 생각보다 달리기보다 어렵습니다.”','“운동에는 인정욕구가 없어야 됩니다.”']},say:'두 문장을 나란히 띄우고 답을 받는다.'},
+ [ {k:'반전',card:{q:'같은 날 하신 두 말씀입니다. 모순일까요?',ab:['“매일 보여줘야 되는데, 이게 생각보다 달리기보다 어렵습니다.”','“운동에는 인정욕구가 없어야 됩니다.”'],quiz:true,choices:[{t:'모순이다',ok:false,why:'같은 “보여주기”처럼 보이지만, 가리키는 게 다릅니다.'},{t:'모순이 아니다',ok:true,why:'A는 과정을 매일 보여줘서 다른 사람에게 불을 붙이는 일, B는 남에게 인정받으려고 몸을 만드는 일. 보여주는 것과 보여주려고 사는 것은 다릅니다 (오키 정리).'}]},say:'두 문장을 나란히 띄우고 손을 들게 한 뒤 공개.'},
    {k:'만화·영상',ep:25,screen:'보여주는 능력',say:'호나인님 러닝 이야기 — 달리기 실력과 매일 보여주는 능력은 다르다.'},
    {k:'그날 현장',id:'B01',screen:'“중량이 전혀 없어도 됩니다. 500개 하면 중량이 생깁니다.”',say:'대장님 개인 훈련 경험. 멤버 과제가 아님.'},
    {k:'만화·영상',ep:6,screen:'상체는 빠르고, 하체는 어렵다'},
@@ -219,13 +229,13 @@ const STORY=[
    {k:'반전 풀기',card:{q:'보여주는 것 ≠ 보여주려고 사는 것',note:'오키 정리'},say:'몸은 내 삶을 위해, 과정 공유는 다른 사람을 움직이기 위해.'},
    {k:'우리 이야기',card:{q:'BMW에서 나는 어떤 행동을 보여 주고 있나요?'}} ],
  [ {k:'장면',id:'V_B1',screen:'저녁 6시, 엉클조를 나와 덴큐로.'},
-   {k:'딜레마',card:{q:'사람이 거의 오지 않는 공간에 월세를 계속 낸다면, 그 선택을 어떻게 평가하겠습니까?'},say:'“월세는 계속 나가는데 사람은 거의 오지 않습니다.” 한 번 침묵.'},
+   {k:'딜레마',card:{q:'사람이 거의 오지 않는 공간에 월세를 계속 낸다면, 그 선택을 어떻게 평가하겠습니까?',quiz:true,choices:[{t:'돈 낭비다',ok:false,why:'당장의 이용률만 보면 그렇습니다. 대장님은 다른 걸 보셨습니다.'},{t:'장소가 사람을 바꾼다',ok:true,why:'“장소성이 정신을 지배합니다. 장소가 중요하다고요.” 몸을 옮겨야 정신이 바뀌고, 그래서 아지트를 중심에 두셨습니다.'},{t:'언젠가 알아줄 거다',ok:true,why:'그 의미는 바로 전달되지 않았습니다. 이 장면의 끝에서 나오는 말 — “마음은 늦게 도착합니다.”'}]},say:'“월세는 계속 나가는데 사람은 거의 오지 않습니다.” 한 번 침묵.'},
    {k:'그날 현장',id:'V_B2',screen:'덴큐, 오뎅바의 규칙'},
    {k:'만화·영상',ep:4,screen:'마음은 늦게 도착한다'},
    {k:'대장님의 답',id:'B06',screen:'“마음은 늦게 도착합니다.”',say:'감동을 억지로 만들지 않는다.'},
    {k:'판서',id:'P_073_mind_arrives_late',screen:'말은 빨리, 마음은 편지처럼 늦게'},
    {k:'우리 이야기',card:{q:'누군가의 행동을 시간이 지나서야 이해한 적이 있나요?'}} ],
- [ {k:'미스터리',card:{q:'그날 저녁 내내, 대장님이 일부러 다르게 하신 행동이 하나 있었습니다. 무엇이었을까요?'},say:'제가 AI 가르치는 게 답답하다고 하자, 대장님이 갑자기 이 이야기를 꺼내셨어요.'},
+ [ {k:'미스터리',card:{q:'그날 저녁 내내, 대장님이 일부러 다르게 하신 행동이 하나 있었습니다. 무엇이었을까요?',quiz:true,choices:[{t:'술을 덜 드셨다',ok:false,why:'그날 대장님이 짚으신 건 이게 아니었습니다.'},{t:'휴대폰 배터리를 챙기셨다',ok:false,why:'배터리 이야기도 나오긴 했습니다(“저는 웬만하면 진짜 50퍼센트 밑으로는 안 떨어뜨립니다.”). 하지만 그건 평소 습관이지, 그날만 일부러 한 행동은 아니었어요.'},{t:'왼손으로 음식을 집으셨다',ok:true,why:'“저는 오늘 계속 왼손으로 집었습니다.” 옆 사람 자리를 넓혀 주려고요. 오른손으로 하면 옆이 좁아지거든요.'},{t:'말을 아끼셨다',ok:false,why:'그날 대장님이 짚으신 건 이게 아니었습니다.'}]},say:'제가 AI 가르치는 게 답답하다고 하자, 대장님이 갑자기 이 이야기를 꺼내셨어요.'},
    {k:'대장님의 답',id:'B13',screen:'“저는 오늘 계속 왼손으로 집었습니다.”',say:'원문: 공간을 확보하려면 왼손으로 해야 된다. 양손잡이라 오른손으로 하면 옆이 좁아진다.'},
    {k:'만화',ep:1,screen:'왼손에 담긴 배려'},
    {k:'판서',id:'P_089_left_hand',screen:'맞는 말도, 받아들일 수 있게'},
@@ -278,7 +288,7 @@ function clearStage(){stopMedia(el('video'));stopMedia(el('audio'));el('yt').rem
 function showItem(it){clearStage();if(!it){document.body.classList.remove('wide');return}
  if(it.ep&&!find(it.ep)){el('empty').textContent=loaded?'강의실 자료를 불러오지 못했습니다. 아래 목록의 링크로 열어 주세요.':'자료 불러오는 중…';el('empty').classList.remove('hide');el('matInfo').textContent='';document.body.classList.remove('wide');return}
  if(it.card){const c=it.card;el('stage').classList.add('cardmode');el('cardBox').classList.remove('hide');
-  el('cardBox').innerHTML='<div class="cq">'+esc(c.q)+'</div>'+(c.choices?'<ol class="cc">'+c.choices.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol>':'')+(c.ab?'<div class="cab">'+c.ab.map((x,i)=>'<div><b>'+'AB'[i]+'</b><p>'+esc(x)+'</p></div>').join('')+'</div>':'')+(c.note?'<div class="cn">'+esc(c.note)+'</div>':'');
+  el('cardBox').innerHTML='<div class="cq">'+esc(c.q)+'</div>'+(c.ab?'<div class="cab">'+c.ab.map((x,i)=>'<div><b>'+'AB'[i]+'</b><p>'+esc(x)+'</p></div>').join('')+'</div>':'')+(c.choices?'<ol class="cc'+(c.quiz?' quiz':'')+'">'+c.choices.map((x,i)=>typeof x==='string'?'<li>'+esc(x)+'</li>':'<li><button class="qb" onclick="quizPick(this)" data-ok="'+(x.ok?1:0)+'"><span class="qt">'+esc(x.t)+'</span><span class="qm"></span></button><div class="qw">'+esc(x.why)+'</div></li>').join('')+'</ol>'+(c.quiz?'<div class="qall"><button class="btn" onclick="quizAll(this)">정답 모두 보기</button><span class="qsum">'+esc(c.all||'')+'</span></div>':''):'')+(c.note?'<div class="cn">'+esc(c.note)+'</div>':'');
   el('matInfo').textContent='화면 질문';document.body.classList.remove('wide');return}
  if(it.ep){const m=find(it.ep);setScript(m);el('matInfo').textContent=m.no+'편 · '+(isToon(m)?'만화':'영상 '+m.durstr);if(isToon(m))pics=m.notes;else curVideo={src:m.src,poster:ROOT+m.thumb,title:m.no+'편 · '+m.title}}
  else{const r=it.r;el('matInfo').textContent=r.tag+' · '+r.title.replace(/[“”]/g,'').slice(0,40);if(r.credit)el('credit').textContent=r.credit;
@@ -289,6 +299,8 @@ function showItem(it){clearStage();if(!it){document.body.classList.remove('wide'
  if(pics){el('stage').classList.add('toonmode');el('toonBox').classList.remove('hide');if(pics.length>1)el('pageNav').classList.remove('hide');showPage()}
  if(curVideo){const Vd=el('video');Vd.poster=curVideo.poster;Vd.src=curVideo.src;Vd.classList.remove('hide')}
  document.body.classList.toggle('wide',!!pics)}
+function quizPick(b){const li=b.parentElement;li.classList.add('open',b.dataset.ok==='1'?'ok':'no');b.querySelector('.qm').textContent=b.dataset.ok==='1'?'정답':'아니에요'}
+function quizAll(b){const box=b.closest('.cardscr');box.querySelectorAll('.qb').forEach(x=>quizPick(x));box.querySelector('.qsum').classList.add('show')}
 function select(i){const L=list();matIdx=Math.max(0,Math.min(L.length-1,i));stepMode=false;showItem(L[matIdx]);renderSteps();renderMats()}
 // 이야기 순서 (← → 또는 리모컨 PageUp/PageDown 으로 넘김, 마지막 다음은 다음 장)
 let step=0,stepMode=true;
