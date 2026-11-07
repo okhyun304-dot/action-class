@@ -158,7 +158,7 @@ const REAL=[
 const Q=(t,ok,why)=>({t,ok,why});
 const CH=[
 { // 1장 걷기
- open:{m:'map_jamwon',line:'11월 3일 오후 1시 반. 잠원에서 신사동까지, 대장님과 걸었습니다.',say:'제가 잠원동, 반포동을 그냥 비슷한 동네로 생각했는데, 대장님은 걷는 내내 다른 걸 보고 계셨어요. (지도에서 잠원 → 신사역 길을 짚어 준다. 사진은 ④ 더 알아보기에)'},
+ open:{m:'map_jamwon',line:'11월 3일 오후 1시 반. 잠원에서 신사동까지, 대장님과 걸었습니다.',more:['w_133149','w_133150','w_133348','w_133925','w_140041','w_140056','w_140106'],say:'제가 잠원동, 반포동을 그냥 비슷한 동네로 생각했는데, 대장님은 걷는 내내 다른 걸 보고 계셨어요. (지도에서 잠원 → 신사역 길을 짚어 준다. 사진은 ④ 더 알아보기에)'},
  quiz:{q:'같은 길을 걸었는데, 대장님은 무엇을 보고 계셨을까요?',choices:[
   Q('건물의 높이와 밀도',1,'“압축률로 따지면 진짜 RAR도 아니고 ZIP도 아니에요.” 땅이 비싸니까 위로 올리고 또 올린 걸 보고 값을 유추하셨습니다.'),
   Q('동네 이름이 주는 반응',1,'“반포라고 하면 알아요.” 잠원이라고 하면 모르고, 반포라고 하면 반응이 달라집니다.'),
@@ -322,7 +322,14 @@ const EXTRA=[
  AI('P_022_process_deleted','과정이 삭제된 돈 · 판서','강의록 판서 · 대장님 목소리 AI 낭독'),
  AI('P_041_the_open_top','상방이 열려 있다 · 판서','강의록 판서 · 대장님 목소리 AI 낭독'),
  {id:'table',t:'pics',src:['media/143253.jpg'],thumb:'media/t_143253.jpg',title:'엉클조의 테이블',sub:'“여러분 데리고 이러면서 술 먹고 하잖아요. 이것도 에너지입니다.”',tag:'사진'},
- ...DG.map(k=>({id:k,t:'pics',src:['media/'+k+'.jpg'],thumb:'media/t_'+k+'.jpg',title:'강의록 도해',sub:'',tag:'도해'}))
+{id:'w_133149',t:'pics',src:['media/133149.jpg'],thumb:'media/t_133149.jpg',title:'그날 걸었던 길',sub:'13:31 · 잠원',tag:'사진'},
+ {id:'w_133150',t:'pics',src:['media/133150.jpg'],thumb:'media/t_133150.jpg',title:'그날 걸었던 길',sub:'13:31 · 잠원',tag:'사진'},
+ {id:'w_133348',t:'pics',src:['media/133348.jpg'],thumb:'media/t_133348.jpg',title:'그날 걸었던 길',sub:'13:33 · 잠원에서 신사동 쪽으로',tag:'사진'},
+ {id:'w_133925',t:'pics',src:['media/133925.jpg'],thumb:'media/t_133925.jpg',title:'그날 걸었던 길',sub:'13:39 · 길 하나 건너기 전',tag:'사진'},
+ {id:'w_140041',t:'pics',src:['media/140041.jpg'],thumb:'media/t_140041.jpg',title:'그날 걸었던 길',sub:'14:00 · 신사동 골목',tag:'사진'},
+ {id:'w_140056',t:'pics',src:['media/140056.jpg'],thumb:'media/t_140056.jpg',title:'그날 걸었던 길',sub:'14:00 · 신사동 골목',tag:'사진'},
+ {id:'w_140106',t:'pics',src:['media/140106.jpg'],thumb:'media/t_140106.jpg',title:'그날 걸었던 길',sub:'14:01 · 덴큐 앞',tag:'사진'},
+  ...DG.map(k=>({id:k,t:'pics',src:['media/'+k+'.jpg'],thumb:'media/t_'+k+'.jpg',title:'강의록 도해',sub:'',tag:'도해'}))
 ];
 const ALLM=[...EXTRA,...REAL.flat()];
 
@@ -433,7 +440,7 @@ function media(id,opt){const r=M(id);if(!r)return '';opt=opt||{};
 function sayBox(t){return ''}
 
 // 칸별 내용
-function paneOpen(c){return media(c.open.m)+'<div class="big">'+esc(c.open.line)+'</div>'+sayBox(c.open.say)}
+function paneOpen(c){return media(c.open.m)+'<div class="big">'+esc(c.open.line)+'</div>'+(c.open.more?'<div class="sec" style="margin-top:34px"><div class="sh">그날 걸었던 길 · 실제 사진</div><div class="mgrid">'+c.open.more.map(id=>media(id)).join('')+'</div></div>':'')}
 function paneQuiz(c){const z=c.quiz;let h='<div class="sec"><div class="sh">퀴즈 · 보기를 눌러 보세요</div><div class="q">'+esc(z.q)+'</div>';
  if(z.ab)h+='<div class="cab">'+z.ab.map((x,i)=>'<div><b>'+'AB'[i]+'</b><p>'+esc(x)+'</p></div>').join('')+'</div>';
  h+='<ol class="qz">'+z.choices.map(x=>'<li><button class="qb" onclick="pick(this)" data-ok="'+(x.ok?1:0)+'"><span>'+esc(x.t)+'</span><span class="qm"></span></button><div class="qw">'+esc(x.why)+'</div></li>').join('')+'</ol>';
