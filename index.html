@@ -265,6 +265,7 @@ function openK(i){F='k'+i;player.pause();
   document.querySelectorAll('.side .sitem[data-f]').forEach(el=>el.classList.toggle('on',el.dataset.f===F));window.scrollTo(0,0);}
 function setF(f){F=f;document.getElementById('kview').classList.add('hide');['hero','sections'].forEach(id=>document.getElementById(id).classList.remove('hide'));document.querySelector('.overall').classList.remove('hide');renderHome();
   document.querySelectorAll('.side .sitem[data-f]').forEach(el=>el.classList.toggle('on',el.dataset.f===f));
+  const on=document.querySelector('.side .sitem.on');if(on&&innerWidth<=860)on.scrollIntoView({inline:'center',block:'nearest'});
   window.scrollTo(0,0);}
 function card(e){
   const p=pct(e);
