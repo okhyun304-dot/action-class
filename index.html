@@ -259,7 +259,7 @@ function save(){localStorage.setItem('prog2',JSON.stringify(P))}
 function pct(e){const p=P[e.src];if(!p)return 0;if(p.done)return 100;return Math.min(99,Math.round(p.t/e.dur*100))}
 function fmt(t){t=Math.round(t);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')}
 function avCls(ch){return ch==='행동주의자'?'chB':(ch==='음악'?'chMu':(ch==='행동 아카이브'?'chA':(ch==='학습만화'?'chT':'chM')))}
-const KL=[["행동지식 강의실", "https://okhyun304-dot.github.io/action-class/지식/"], ["스터츠 판서실", "https://okhyun304-dot.github.io/action-class/지식/sketch/"], ["BMW 강의", "https://okhyun304-dot.github.io/action-class/bmw/?v=1107i"]];
+const KL=[["행동지식 강의실", "https://okhyun304-dot.github.io/action-class/지식/"], ["스터츠 판서실", "https://okhyun304-dot.github.io/action-class/지식/sketch/"], ["BMW 강의", "https://okhyun304-dot.github.io/action-class/bmw/?v=1107j"]];
 function openK(i){F='k'+i;player.pause();
   document.getElementById('watch').classList.add('hide');document.getElementById('home').classList.remove('hide');
   ['hero','sections'].forEach(id=>document.getElementById(id).classList.add('hide'));document.querySelector('.overall').classList.add('hide');
