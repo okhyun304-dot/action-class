@@ -142,6 +142,7 @@ textarea:focus{outline:none;border-color:var(--ac)}textarea::placeholder{color:v
  .bar.on{background:var(--acbg);border-color:var(--ac)}.bar.on span{color:#fff;font-weight:600}.bar.done{border-color:#5b47b8}
  .bar .bn{color:var(--ac)}
 }
+.vsw{display:flex;gap:8px;margin:10px 0 12px;flex-wrap:wrap}.vsw .btn{min-height:42px}.vsw .btn.on{background:var(--acbg);border-color:var(--ac);color:#fff;font-weight:700}
 </style></head><body>
 <div class="wrap">
 <div class="top"><div class="brand"><b>BMW 강의</b>11월 3일, 대장님은 무엇을 보셨을까 · 2026.11.08</div><div class="tools"><a class="btn" href="https://okhyun304-dot.github.io/action-class/" target="_parent">강의 아카이브 ↗</a></div></div>
@@ -544,9 +545,11 @@ function paneEps(){if(!loaded)return '<p class="mp">자료 불러오는 중…</
  let h='<div class="chips">'+L.map(x=>{const m=find(x.n);if(!m)return '';const v=!isToon(m);return '<button class="chip" onclick="jumpEp('+x.n+')"><img src="'+ROOT+esc(m.thumb)+'" alt=""><span><b>'+m.no+'편 · '+esc(m.title)+'</b><small><span class="k'+(v?' v':'')+'">'+(v?'▶ 영상 '+esc(m.durstr):'만화')+'</span></small></span></button>'}).join('')+'</div>';
  L.forEach((x,i)=>{const m=find(x.n);if(!m)return;const v=!isToon(m);
   h+='<section class="epsec" id="ep'+m.no+'"><div class="eph"><span class="en">'+(i+1)+'</span>'+m.no+'편 · '+esc(m.title)+'<span class="k'+(v?' v':'')+'">'+(v?'▶ 영상 '+esc(m.durstr):'만화 '+m.notes.length+'장')+'</span></div><div class="eps">'+esc(m.sub||'')+'</div>';
-  h+=v?'<div class="media"><video controls playsinline preload="metadata" poster="'+ROOT+esc(m.thumb)+'" src="'+esc(m.src)+'"></video></div>':gal(m.notes,m.no+'편 · '+m.title);
+  h+=v?vtog(m):gal(m.notes,m.no+'편 · '+m.title);
   h+=(m.script?'<div class="eprow"><span></span><button class="btn" onclick="openScript('+m.no+')">강의록 전문 보기</button></div>':'')+deepHTML(m)+'</section>'});
  return h}
+function vtog(m){const id='vt'+m.no,hasC=m.notes&&m.notes.length;return '<div class="vtog" id="'+id+'">'+(hasC?'<div class="vsw"><button class="btn on" onclick="vsw(\''+id+'\',0)">▶ 영상으로 보기</button><button class="btn" onclick="vsw(\''+id+'\',1)">만화로 보기 · '+m.notes.length+'장</button></div>':'')+'<div class="vv"><div class="media"><video controls playsinline preload="metadata" poster="'+ROOT+esc(m.thumb)+'" src="'+esc(m.src)+'"></video></div></div>'+(hasC?'<div class="vc" style="display:none">'+gal(m.notes,m.no+'편 · '+m.title)+'</div>':'')+'</div>'}
+function vsw(id,k){const r=el(id);if(!r)return;r.querySelectorAll('.vsw .btn').forEach((b,i)=>b.classList.toggle('on',i===k));r.querySelector('.vv').style.display=k?'none':'';r.querySelector('.vc').style.display=k?'':'none';if(k){const v=r.querySelector('video');if(v)v.pause()}}
 function jumpEp(n){const e=el('ep'+n);if(e)e.scrollIntoView({block:'start',behavior:'smooth'})}
 function paneMore(c){return c.more.map(s=>'<div class="sec"><div class="mh">'+esc(s.h)+'</div>'+(s.p?'<p class="mp">'+hl(s.p)+'</p>':'')+'<div class="mgrid">'+(s.m||[]).map(id=>media(id)).join('')+'</div></div>').join('')}
 function paneSum(c){const S=SUMQ[idx],s=STAGES[idx];const d=done.includes(idx);
