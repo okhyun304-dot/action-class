@@ -32,7 +32,9 @@ button,a,textarea{font:inherit;color:inherit}button{cursor:pointer}
 .title{font-size:clamp(20px,2.4vw,27px);font-weight:750;letter-spacing:-.02em;line-height:1.35;margin:8px 0 18px}
 /* player */
 .stage{position:relative;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
-.stage.toonmode{aspect-ratio:auto;height:min(70vh,700px);background:#0e0e12}
+.stage.toonmode{aspect-ratio:auto;background:#fff}
+.stage.toonmode .toon{position:relative;inset:auto}
+.stage.toonmode .toon img{width:100%;height:auto;max-height:none}
 .stage video{position:absolute;inset:0;width:100%;height:100%;background:#000}
 .stage .toon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;user-select:none}
 .stage .toon img{max-width:100%;max-height:100%;object-fit:contain;display:block}
@@ -79,7 +81,8 @@ textarea:focus{outline:none;border-color:var(--ac)}textarea::placeholder{color:v
 .modal{width:100%;max-width:1100px;max-height:96vh;display:flex;flex-direction:column;gap:10px}
 .mhd{display:flex;justify-content:space-between;align-items:center;gap:10px}.mhd h3{margin:0;font-size:15px;font-weight:600}
 .modal video{width:100%;aspect-ratio:16/9;background:#000;border-radius:8px}
-.modal img{max-width:100%;max-height:80vh;margin:auto;display:block;object-fit:contain}
+.modal img{width:min(100%,1000px);height:auto;margin:auto;display:block}
+.ov.tall{align-items:flex-start;overflow-y:auto}.ov.tall .modal{max-height:none}.ov.tall .mhd,.ov.tall .mnav{position:sticky;background:rgba(4,4,6,.92);padding:6px 0;z-index:2}.ov.tall .mhd{top:-14px}.ov.tall .mnav{bottom:-14px}
 .modal .txt{background:#141419;border:1px solid var(--line);border-radius:10px;padding:22px;overflow:auto;white-space:pre-line;font-size:15px;line-height:1.8;max-height:78vh}
 .mnav{display:flex;justify-content:center;gap:12px;align-items:center;font-size:13px;color:var(--mut)}
 .hide{display:none!important}
@@ -88,7 +91,6 @@ textarea:focus{outline:none;border-color:var(--ac)}textarea::placeholder{color:v
  .wrap{padding:12px 14px 40px}.card{padding:16px;border-radius:12px}.grid{gap:14px;margin-top:18px}.col{gap:14px}
  .bars{gap:4px}.bar span{display:none}.bar.on span{display:block;position:absolute;left:14px;right:14px;margin-top:6px}
  .progress{position:relative;padding-bottom:22px}
- .stage.toonmode{height:auto;min-height:60vh}.stage.toonmode .toon{position:relative;inset:auto;min-height:60vh}
  .mat img{width:60px;height:34px}.brand{font-size:12px}.btn{padding:7px 10px;font-size:12.5px}
  .foot .muted{display:none}
 }
@@ -160,11 +162,11 @@ function select(i){const L=list();matIdx=Math.max(0,Math.min(L.length-1,i));cons
  if(isToon(m)){el('stage').classList.add('toonmode');el('toonBox').classList.remove('hide');el('pageNav').classList.remove('hide');showPage()}else{V.poster=ROOT+m.thumb;V.src=m.src;V.classList.remove('hide')}
  el('matInfo').textContent=m.no+'편 · '+(isToon(m)?'만화':'영상 '+m.durstr);el('scriptDesc').textContent=m.no+'편 「'+m.title+'」 — '+(m.sub||'');el('scriptBtn').disabled=!m.script;renderMats()}
 
-function showPage(){if(!cur||!isToon(cur))return;const n=cur.notes.length;pg=Math.max(0,Math.min(n-1,pg));el('toon').src=cur.notes[pg];el('pageCount').textContent=(pg+1)+' / '+n;if(big==='toon'){el('mToon').src=cur.notes[pg];el('mCount').textContent=(pg+1)+' / '+n}}
+function showPage(){if(!cur||!isToon(cur))return;const n=cur.notes.length;pg=Math.max(0,Math.min(n-1,pg));el('toon').src=cur.notes[pg];const st=el('stage').getBoundingClientRect();if(st.top<0)el('stage').scrollIntoView({block:'start'});el('pageCount').textContent=(pg+1)+' / '+n;if(big==='toon'){el('mToon').src=cur.notes[pg];el('ov').scrollTop=0;el('mCount').textContent=(pg+1)+' / '+n}}
 function page(d){if(!cur||!isToon(cur))return;pg+=d;showPage()}
 
-function openBig(){if(!cur)return;el('mTitle').textContent=cur.no+'편 · '+cur.title;['mVideo','mToon','mText','mNav'].forEach(k=>el(k).classList.add('hide'));if(isToon(cur)){big='toon';el('mToon').classList.remove('hide');el('mNav').classList.remove('hide');showPage()}else{big='video';const V=el('video'),t=V.currentTime||0;V.pause();const M=el('mVideo');M.src=cur.src;M.classList.remove('hide');M.addEventListener('loadedmetadata',()=>{M.currentTime=t},{once:true})}el('ov').classList.add('open')}
-function openScript(){if(!cur||!cur.script)return;big='text';el('mTitle').textContent=cur.no+'편 · '+cur.title+' — 강의록 (원문 기반)';['mVideo','mToon','mNav'].forEach(k=>el(k).classList.add('hide'));el('mText').textContent=cur.script;el('mText').classList.remove('hide');el('mText').scrollTop=0;el('ov').classList.add('open')}
+function openBig(){if(!cur)return;el('mTitle').textContent=cur.no+'편 · '+cur.title;['mVideo','mToon','mText','mNav'].forEach(k=>el(k).classList.add('hide'));el('ov').classList.toggle('tall',isToon(cur));if(isToon(cur)){big='toon';el('mToon').classList.remove('hide');el('mNav').classList.remove('hide');showPage()}else{big='video';const V=el('video'),t=V.currentTime||0;V.pause();const M=el('mVideo');M.src=cur.src;M.classList.remove('hide');M.addEventListener('loadedmetadata',()=>{M.currentTime=t},{once:true})}el('ov').classList.add('open')}
+function openScript(){if(!cur||!cur.script)return;el('ov').classList.remove('tall');big='text';el('mTitle').textContent=cur.no+'편 · '+cur.title+' — 강의록 (원문 기반)';['mVideo','mToon','mNav'].forEach(k=>el(k).classList.add('hide'));el('mText').textContent=cur.script;el('mText').classList.remove('hide');el('mText').scrollTop=0;el('ov').classList.add('open')}
 function closeBig(){stopVideo(el('mVideo'));el('mToon').removeAttribute('src');el('ov').classList.remove('open');big=null}
 
 function render(){const c=STAGES[idx];el('stageName').textContent=c.name;el('stageTime').textContent=c.time;el('stageTitle').textContent=c.title;el('question').textContent=c.question;el('answer').textContent=c.answer;el('performance').textContent=c.performance;el('scene').textContent=c.scene;el('additional').textContent=c.additional;el('bridge').textContent=c.bridge;el('action').textContent=c.action;el('privateBox').style.display=c.private?'':'none';el('privateNote').textContent=c.private||'';
