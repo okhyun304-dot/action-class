@@ -133,6 +133,15 @@ textarea:focus{outline:none;border-color:var(--ac)}textarea::placeholder{color:v
 .qs li{margin:10px 0}
 .tabs{position:sticky;top:0;z-index:6;background:#121217}
 @media(max-width:600px){.tlong{display:none}.gnav.single{display:none}.navrow .btn{font-size:13px}.epsec{margin-top:32px}.dx{padding:14px}.mgrid{gap:10px}}
+.bar .bn{font-weight:700;margin-right:5px}
+@media(max-width:600px){
+ .progress{padding-bottom:0}.ph{margin-bottom:6px}
+ .bars{display:flex;overflow-x:auto;gap:8px;padding:2px 2px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.bars::-webkit-scrollbar{display:none}
+ .bar{flex:none;border:1px solid var(--line2);border-radius:22px;padding:10px 14px;background:#16161b;min-height:44px;max-width:230px}
+ .bar i{display:none}.bar span,.bar.on span{display:block!important;position:static!important;margin:0;font-size:14px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .bar.on{background:var(--acbg);border-color:var(--ac)}.bar.on span{color:#fff;font-weight:600}.bar.done{border-color:#5b47b8}
+ .bar .bn{color:var(--ac)}
+}
 </style></head><body>
 <div class="wrap">
 <div class="top"><div class="brand"><b>BMW 강의</b>11월 3일, 대장님은 무엇을 보셨을까 · 2026.11.08</div><div class="tools"><a class="btn" href="https://okhyun304-dot.github.io/action-class/" target="_parent">강의 아카이브 ↗</a></div></div>
@@ -555,7 +564,7 @@ function nav(d){closeBig();if(tab+d>LAST){if(idx===STAGES.length-1)go(0);else go
 function pick(b){const li=b.parentElement;li.classList.add('open',b.dataset.ok==='1'?'ok':'no');b.querySelector('.qm').textContent=b.dataset.ok==='1'?'정답':'아니에요'}
 function pickAll(b){const box=b.closest('.sec');box.querySelectorAll('.qb').forEach(x=>pick(x));box.querySelector('.qsum').classList.add('show')}
 
-function renderBars(){el('bars').innerHTML=STAGES.map((s,i)=>'<button class="bar'+(i===idx?' on':'')+(done.includes(i)?' done':'')+'" onclick="go('+i+')"><i></i><span>'+esc(s.name)+'</span></button>').join('');el('doneCount').textContent=done.length+' / '+STAGES.length+' 장 완료'}
+function renderBars(){el('bars').innerHTML=STAGES.map((s,i)=>'<button class="bar'+(i===idx?' on':'')+(done.includes(i)?' done':'')+'" onclick="go('+i+')"><i></i><span><b class="bn">'+(i+1)+'장</b>'+esc(s.name.replace(/^\d+장 · /,''))+'</span></button>').join('');{const b=el('bars'),o=b.children[idx];if(o&&b.scrollWidth>b.clientWidth)b.scrollLeft=o.offsetLeft-b.clientWidth/2+o.clientWidth/2}el('doneCount').textContent=done.length+' / '+STAGES.length+' 장 완료'}
 function render(){const s=STAGES[idx];el('stageName').textContent=s.name;el('stageTime').textContent=s.time;el('stageTitle').textContent=s.title;
  el('flow').innerHTML=s.scene.split('→').map(x=>'<li>'+esc(x.trim())+'</li>').join('');el('keys').innerHTML=SUMQ[idx].sum.map(x=>'<li>'+esc(x[0])+'</li>').join('');
  renderBars();renderPane();store.set('bmw-current-stage',idx);window.scrollTo({top:0,behavior:'instant'})}
