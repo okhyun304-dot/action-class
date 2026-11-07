@@ -265,7 +265,8 @@ function openK(i){F='k'+i;player.pause();
   ['hero','sections'].forEach(id=>document.getElementById(id).classList.add('hide'));document.querySelector('.overall').classList.add('hide');
   const kv=document.getElementById('kview');kv.classList.remove('hide');
   const f=document.getElementById('kframe');if(f.dataset.u!==KL[i][1]){f.src=KL[i][1];f.dataset.u=KL[i][1];}
-  document.querySelectorAll('.side .sitem[data-f]').forEach(el=>el.classList.toggle('on',el.dataset.f===F));window.scrollTo(0,0);}
+  document.querySelectorAll('.side .sitem[data-f]').forEach(el=>el.classList.toggle('on',el.dataset.f===F));window.scrollTo(0,0);
+  const on=document.querySelector('.side .sitem.on');if(on&&innerWidth<=860)on.scrollIntoView({inline:'center',block:'nearest'});}
 function setF(f){F=f;document.getElementById('kview').classList.add('hide');['hero','sections'].forEach(id=>document.getElementById(id).classList.remove('hide'));document.querySelector('.overall').classList.remove('hide');renderHome();
   document.querySelectorAll('.side .sitem[data-f]').forEach(el=>el.classList.toggle('on',el.dataset.f===f));
   const on=document.querySelector('.side .sitem.on');if(on&&innerWidth<=860)on.scrollIntoView({inline:'center',block:'nearest'});
