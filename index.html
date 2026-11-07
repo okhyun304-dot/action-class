@@ -159,7 +159,36 @@ video.mainv{width:100%;border-radius:10px;background:#000}
 /* 지식 강의실 — 사이드 탭에서 강의실 안 iframe 으로 연다 (261006) */
 .kview{margin:-22px -30px -60px;height:calc(100vh - 60px)}
 .kview iframe{width:100%;height:100%;border:0;display:block;background:var(--bg)}
-@media(max-width:860px){.side{display:none}}
+/* 모바일 (261107) — 사이드바를 위쪽 가로 칩 줄로, 히어로는 세로로, 여백 줄임 */
+@media(max-width:860px){
+  .shell{flex-direction:column}
+  .side{display:flex;width:auto;min-width:0;height:auto;position:sticky;top:52px;z-index:15;gap:6px;padding:8px 12px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);background:rgba(14,15,17,.96);scrollbar-width:none}
+  .side::-webkit-scrollbar{display:none}
+  .side .stitle,.side .sdiv,.side .lnk2{display:none}
+  .sitem{flex:0 0 auto;margin:0;padding:6px 12px 6px 6px;gap:7px;font-size:13px;border:1px solid var(--line);border-radius:18px;white-space:nowrap}
+  .sitem .sic{width:22px;height:22px;font-size:11px}
+  .topbar{height:52px;padding:0 16px}
+  .logo span{display:none}
+  .main{padding:14px 16px 50px}
+  .hero{flex-direction:column}
+  .hero .hth{width:100%;min-width:0}
+  .hero .hin{padding:14px 16px 16px;gap:6px}
+  .hero .hin b{font-size:18px}
+  .hero .hbtn{margin-top:6px}
+  .overall{gap:10px}
+  .sec{font-size:18px}
+  .grid{gap:16px}
+  .watch{padding:0 0 50px}
+  video.mainv{border-radius:0}
+  .toonv{border-radius:0}
+  .vt,.vmeta,.tabs,.panel,.reflect,.memo{margin-left:16px;margin-right:16px}
+  .tabs{overflow-x:auto}
+  .vt h1{font-size:19px}.vt .pen{font-size:18px}
+  .tabs button{padding:8px 14px}
+  .notes{grid-template-columns:1fr;padding:10px}
+  .rcol{padding:0 16px;min-width:0;width:auto}
+  .kview{margin:-14px -16px -50px;height:calc(100vh - 100px)}
+}
 </style></head><body>
 <div class="topbar">
   <div class="logo" onclick="goHome()">행동<em>주의자</em> 강의실<span>판서로 배우는 생각의 도구</span></div>
