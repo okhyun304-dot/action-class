@@ -34,7 +34,7 @@ a{color:inherit;text-decoration:none}
 .tnav{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:84px;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:40px;line-height:1;cursor:pointer;border-radius:10px}
 .tnav:disabled{opacity:.15;cursor:default}.tprev{left:10px}.tnext{right:10px}
 .tcount{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#fff;font-size:13px;padding:5px 12px;border-radius:14px}
-@media(max-width:700px){.toonv{height:auto;min-height:60vh}.tnav{width:40px;height:64px;font-size:30px}}
+@media(max-width:700px){.toonv{height:auto;min-height:60vh}.tnav{width:30px;height:56px;font-size:26px;background:rgba(0,0,0,.35)}.tprev{left:4px}.tnext{right:4px}}
 .sitem.lnk2 .sic{background:transparent;color:var(--grey);border:1px solid var(--line)}
 .sdiv{border-top:1px solid var(--line);margin:12px 8px}
 .stitle{font-size:11px;color:var(--dim);padding:4px 14px 6px;letter-spacing:.12em}
@@ -338,6 +338,9 @@ function toonShow(){const n=cur.notes;document.getElementById('toonimg').src=n[T
   document.getElementById('tprev').disabled=TI===0;document.getElementById('tnext').disabled=TI===n.length-1;
   if(n[TI+1]){const im=new Image();im.src=n[TI+1];}}
 function toonGo(d){if(!cur)return;TI=Math.max(0,Math.min(cur.notes.length-1,TI+d));toonShow();}
+let TX=null;
+document.addEventListener('touchstart',ev=>{if(ev.target.closest&&ev.target.closest('#toonv'))TX=ev.touches[0].clientX;},{passive:true});
+document.addEventListener('touchend',ev=>{if(TX===null)return;const dx=ev.changedTouches[0].clientX-TX;TX=null;if(Math.abs(dx)>50)toonGo(dx<0?1:-1);},{passive:true});
 function toonClick(ev){const r=ev.target.getBoundingClientRect();toonGo(ev.clientX-r.left<r.width/3?-1:1);}
 document.addEventListener('keydown',ev=>{if(document.getElementById('toonv').classList.contains('hide')||/INPUT|TEXTAREA/.test(ev.target.tagName))return;
   if(ev.key==='ArrowRight')toonGo(1);if(ev.key==='ArrowLeft')toonGo(-1);});
