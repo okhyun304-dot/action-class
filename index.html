@@ -27,8 +27,12 @@ a{color:inherit;text-decoration:none}
 .sitem.chMu .sic{background:var(--blue);color:#fff}
 .sitem.chA .sic{background:#ffc900;color:#0e0f11}
 .sitem.chT .sic{background:#e9e4d8;color:#0e0f11}.av.chT,.card .av.chT{background:#e9e4d8;color:#0e0f11}
-.toonmsg{aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#16171a;border-radius:12px;color:#cfd2d7;font-size:15px}
-.toonmsg b{font-size:20px;color:#fff}
+.toonv{position:relative;background:#16171a;border-radius:12px;display:flex;justify-content:center;align-items:center;height:min(88vh,1150px);user-select:none}
+.toonv img{max-width:100%;max-height:100%;object-fit:contain;cursor:pointer;border-radius:4px}
+.tnav{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:84px;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:40px;line-height:1;cursor:pointer;border-radius:10px}
+.tnav:disabled{opacity:.15;cursor:default}.tprev{left:10px}.tnext{right:10px}
+.tcount{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#fff;font-size:13px;padding:5px 12px;border-radius:14px}
+@media(max-width:700px){.toonv{height:auto;min-height:60vh}.tnav{width:40px;height:64px;font-size:30px}}
 .sitem.lnk2 .sic{background:transparent;color:var(--grey);border:1px solid var(--line)}
 .sdiv{border-top:1px solid var(--line);margin:12px 8px}
 .stitle{font-size:11px;color:var(--dim);padding:4px 14px 6px;letter-spacing:.12em}
@@ -184,7 +188,7 @@ video.mainv{width:100%;border-radius:10px;background:#000}
   <div class="wgrid">
     <div class="pcol">
       <video id="player" class="mainv" controls preload="metadata"></video>
-      <div id="toonmsg" class="toonmsg hide"><b>만화로 보는 편</b>아래 「판서 노트」에서 만화를 넘겨 보세요</div>
+      <div id="toonv" class="toonv hide"><img id="toonimg" alt="만화" onclick="toonClick(event)"><button class="tnav tprev" id="tprev" onclick="toonGo(-1)">‹</button><button class="tnav tnext" id="tnext" onclick="toonGo(1)">›</button><div class="tcount" id="tcount"></div></div>
       <div class="vt"><h1 id="vtitle"></h1><span class="pen" id="vpen"></span></div>
       <div class="vmeta"><span class="vdesc" id="vdesc"></span><div class="speed" id="speed"></div></div>
       <div class="tabs">
@@ -291,13 +295,24 @@ function renderOthers(){
       +'<div class="mi"><b>'+e.no+e.unit+' · '+e.title+'</b><small>'+e.ch+' · '+e.sub+'</small>'+(p===100?'<span class="dn">✓ 수강 완료</span>':'')+'</div></div>';
   }).join('');
 }
+/* 만화 넘겨 보기 (학습만화 — 영상 없는 편) */
+let TI=0;
+function toonShow(){const n=cur.notes;document.getElementById('toonimg').src=n[TI];
+  document.getElementById('tcount').textContent=(TI+1)+' / '+n.length;
+  document.getElementById('tprev').disabled=TI===0;document.getElementById('tnext').disabled=TI===n.length-1;
+  if(n[TI+1]){const im=new Image();im.src=n[TI+1];}}
+function toonGo(d){if(!cur)return;TI=Math.max(0,Math.min(cur.notes.length-1,TI+d));toonShow();}
+function toonClick(ev){const r=ev.target.getBoundingClientRect();toonGo(ev.clientX-r.left<r.width/3?-1:1);}
+document.addEventListener('keydown',ev=>{if(document.getElementById('toonv').classList.contains('hide')||/INPUT|TEXTAREA/.test(ev.target.tagName))return;
+  if(ev.key==='ArrowRight')toonGo(1);if(ev.key==='ArrowLeft')toonGo(-1);});
 function openEp(key,push){
   cur=DATA.find(e=>e.key===key);
   if(!cur)return;
   document.getElementById('home').classList.add('hide');
   document.getElementById('watch').classList.remove('hide');
   const toon=cur.src.indexOf('만화:')===0;
-  player.classList.toggle('hide',toon);document.getElementById('toonmsg').classList.toggle('hide',!toon);
+  player.classList.toggle('hide',toon);document.getElementById('toonv').classList.toggle('hide',!toon);
+  document.getElementById('speed').style.display=toon?'none':'';if(toon){TI=0;toonShow();}
   if(toon){player.pause();player.removeAttribute('src');player.load();}else{player.src=cur.src;}
   document.getElementById('vtitle').textContent=cur.no+cur.unit+' · '+cur.title;
   document.getElementById('vpen').textContent=cur.sub;
@@ -313,7 +328,7 @@ function openEp(key,push){
     document.getElementById('refA').innerHTML=cur.reflect.act?'오늘의 작은 행동 <span>— '+cur.reflect.act+'</span>':'';
     document.getElementById('refA').style.display=cur.reflect.act?'':'none';
   }else{rf.classList.add('hide');}
-  tab(toon?'N':'C');renderOthers();renderMemos();
+  tab(toon?'S':'C');renderOthers();renderMemos();
   if(toon){P[cur.src]={t:0,done:true};localStorage.setItem('prog2',JSON.stringify(P));localStorage.setItem('last',key);window.scrollTo(0,0);
     if(push!==false)history.pushState({key:key},'','#'+encodeURIComponent(key));return;}
   const p=P[cur.src];
