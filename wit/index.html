@@ -48,7 +48,7 @@ td:first-child{color:#fff;font-weight:650;white-space:nowrap}
 .dg-top{padding:12px 16px 9px;border-bottom:1px solid #2a2e34;display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
 .dg-q{font-size:15px;font-weight:700;color:#e8eaed}
 .dg-s{font-size:12.5px;color:#8f96a0}
-.dg-body{max-height:240px;overflow-y:auto;padding:4px 0;position:relative}
+.dg-body{max-height:min(520px,62vh);overflow-y:auto;padding:4px 0;position:relative}
 .dg-turn{display:grid;grid-template-columns:30px 1fr;gap:0 10px;padding:8px 16px 4px}
 .dg-av{width:28px;height:28px;border-radius:50%;position:relative;overflow:hidden;display:block}
 .dg-av::before{content:"";position:absolute;left:50%;top:24%;width:36%;height:36%;margin-left:-18%;border-radius:50%;background:#fff;opacity:.92}
@@ -69,6 +69,10 @@ td:first-child{color:#fff;font-weight:650;white-space:nowrap}
 .dg-sp{border:1px solid #2a2e34;background:none;border-radius:8px;padding:4px 8px;font-size:12.5px;color:#cfd3d8}
 .dg-more{border:0;background:none;color:#8f96a0;font-size:12px;padding:0 16px 10px;display:block;text-align:left;width:100%}
 .dg.fold .dg-body{display:none}
+.dg-back{display:none;width:100%;border:0;border-top:1px solid #2a2e34;background:#1f1b33;color:#cbbcff;font-size:13px;padding:8px}
+.dg.free .dg-back{display:block}
+.dg.fold .dg-back{display:none!important}
+
 @media (max-width:980px){
  .layout{grid-template-columns:1fr;gap:0}
  nav.toc{position:static;max-height:none;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:14px 0 6px}
@@ -827,7 +831,7 @@ function dgHTML(id){const r=META[id],rows=TR[id]||[];let turns=[],cur=null;
  rows.forEach(x=>{if(!cur||cur.n!==x[2]){cur={n:x[2],s:x[0],segs:[]};turns.push(cur)}cur.segs.push(x)});
  return '<div class="dg"><div class="dg-top"><div class="dg-q">🎧 '+esc(r.title)+'</div><div class="dg-s">그날 실제 녹음 · '+esc(r.sub)+'</div></div>'+
  '<div class="dg-body">'+turns.map(u=>'<div class="dg-turn"><i class="dg-av" style="background:'+(AVC[u.n]||'#b8c48e')+'"></i><div><div class="dg-who"><b>'+esc(u.n)+'</b><time>'+mmss(u.s)+'</time></div><div class="dg-tx">'+u.segs.map(x=>'<span data-s="'+x[0]+'" data-e="'+x[1]+'">'+esc(x[3])+'</span>').join(' ')+'</div></div></div>').join('')+'</div>'+
- '<div class="dg-bar"><button class="dg-play" aria-label="재생">▶</button><div class="dg-seek"><div class="dg-rail"></div><div class="dg-fill"></div></div><span class="dg-t">0:00</span><button class="dg-sp">1x</button></div>'+
+ '<button class="dg-back">▼ 지금 재생 중인 곳으로</button><div class="dg-bar"><button class="dg-play" aria-label="재생">▶</button><div class="dg-seek"><div class="dg-rail"></div><div class="dg-fill"></div></div><span class="dg-t">0:00</span><button class="dg-sp">1x</button></div>'+
  '<button class="dg-more">받아쓰기 접기</button><audio preload="none" src="'+esc(r.src)+'"></audio></div>'}
 document.querySelectorAll('.dgslot').forEach(el=>{el.outerHTML=dgHTML(el.dataset.c)});
 const dgOf=n=>n&&n.closest?n.closest('.dg'):null;
@@ -837,13 +841,17 @@ document.addEventListener('click',e=>{const d=dgOf(e.target);if(!d)return;const 
  if(e.target.closest('.dg-more')){d.classList.toggle('fold');e.target.textContent=d.classList.contains('fold')?'받아쓰기 펼치기':'받아쓰기 접기';return}
  const spb=e.target.closest('.dg-sp');if(spb){const L=[1,1.25,1.5,0.8];const i=(L.indexOf(a.playbackRate)+1)%L.length;a.playbackRate=L[i];spb.textContent=L[i]+'x';return}
  const sk=e.target.closest('.dg-seek');if(sk){const r=sk.getBoundingClientRect();const x=(e.clientX-r.left)/r.width;dgWhen(a,()=>{a.currentTime=x*a.duration});return}
- const sp=e.target.closest('.dg-tx span');if(sp){const s=+sp.dataset.s;dgWhen(a,()=>{a.currentTime=s;a.play()})}});
+ if(e.target.closest('.dg-back')){d.classList.remove('free');const on=d.querySelector('.dg-tx span.on'),b=d.querySelector('.dg-body');if(on){b._auto=1;b.scrollTop=on.offsetTop-50}return}
+ const sp=e.target.closest('.dg-tx span');if(sp){d.classList.remove('free');const s=+sp.dataset.s;dgWhen(a,()=>{a.currentTime=s;a.play()})}});
 document.addEventListener('play',e=>{const m=e.target;if(m.tagName!=='AUDIO')return;document.querySelectorAll('audio').forEach(x=>{if(x!==m)x.pause()});const d=dgOf(m);if(d)d.querySelector('.dg-play').textContent='❚❚'},true);
 document.addEventListener('pause',e=>{const d=dgOf(e.target);if(d)d.querySelector('.dg-play').textContent='▶'},true);
 document.addEventListener('ended',e=>{const d=dgOf(e.target);if(d)d.querySelector('.dg-play').textContent='▶'},true);
 document.addEventListener('timeupdate',e=>{const a=e.target;const d=dgOf(a);if(!d)return;const t=a.currentTime;d.querySelector('.dg-fill').style.width=(a.duration?t/a.duration*100:0)+'%';d.querySelector('.dg-t').textContent=mmss(t)+' / '+mmss(a.duration||0);
  let on=null;d.querySelectorAll('.dg-tx span').forEach(s=>{const k=t>=+s.dataset.s&&t<+s.dataset.e;s.classList.toggle('on',k);if(k)on=s});
- if(on){const b=d.querySelector('.dg-body');const y=on.offsetTop;if(y<b.scrollTop+10||y>b.scrollTop+b.clientHeight-40)b.scrollTop=y-50}},true);
+ if(on&&!d.classList.contains('free')){const b=d.querySelector('.dg-body');const y=on.offsetTop;if(y<b.scrollTop+10||y>b.scrollTop+b.clientHeight-40){b._auto=1;b.scrollTop=y-50}}},true);
+function dgFree(b){const d=dgOf(b);if(!d||d.classList.contains('free'))return;d.classList.add('free')}
+['wheel','touchmove'].forEach(ev=>document.addEventListener(ev,e=>{const b=e.target.closest&&e.target.closest('.dg-body');if(b)dgFree(b)},{passive:true}));
+document.addEventListener('scroll',e=>{const b=e.target;if(!b.classList||!b.classList.contains('dg-body'))return;if(b._auto){b._auto=0;return}dgFree(b)},true);
 const toc=document.getElementById('toc');toc.querySelector('.h').addEventListener('click',()=>toc.classList.toggle('open'));
 toc.addEventListener('click',e=>{if(e.target.tagName==='A'&&innerWidth<=980)toc.classList.remove('open')});
 if('mediaSession' in navigator)document.addEventListener('play',e=>{const d=dgOf(e.target);if(d)navigator.mediaSession.metadata=new MediaMetadata({title:d.querySelector('.dg-q').textContent.replace('🎧 ',''),artist:'대장님 대화술 연구'})},true);
