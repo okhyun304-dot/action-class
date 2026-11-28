@@ -308,14 +308,18 @@ function go(ci, opt){
   st.scrollTop = top;
   if (opt.to){ const el = document.getElementById(opt.to); if (el) el.scrollIntoView({block:'start'}); }
   store.set(NS + '.key', W.parts[ci].key);
-  try{ history.replaceState(null, '', '#' + encodeURIComponent(opt.to || W.parts[ci].key)); }catch(e){}
+  const hh = '#' + encodeURIComponent(opt.to || W.parts[ci].key);   // 사용자가 누른 이동은 기록에 쌓아서 휴대폰 '뒤로'가 앞 화면으로 가게
+  try{ if (opt.nav && location.hash !== hh) history.pushState(null, '', hh); else history.replaceState(null, '', hh); }catch(e){}
+  lastH = location.hash;
   document.title = W.parts[ci].title + ' · ' + NAME;
   upd();
 }
-function toHome(){
+function toHome(opt){
+  opt = opt || {};
   document.querySelectorAll('audio').forEach(a=>a.pause());
   $('#deck').style.display = 'none'; $('#home').style.display = 'block'; renderHome();
-  try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
+  try{ if (opt.nav && location.hash) history.pushState(null, '', location.pathname + location.search); else history.replaceState(null, '', location.pathname + location.search); }catch(e){}
+  lastH = location.hash;
   document.title = NAME;
 }
 function upd(){ const st = $('#stage'), m = st.scrollHeight - st.clientHeight; $('#pg').style.width = (m>0 ? Math.min(100, st.scrollTop/m*100) : 0) + '%'; }
@@ -328,12 +332,12 @@ function openSheet(){
 }
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-go]');
-  if (g){ const v = g.dataset.go; if (v==='home') toHome(); else go(+v, {keep: !!g.dataset.keep}); return; }
+  if (g){ const v = g.dataset.go; if (v==='home') toHome({nav: true}); else go(+v, {keep: !!g.dataset.keep, nav: true}); return; }
   const s = e.target.closest('#sbox button[data-to]');
   if (s){ $('#sheet').classList.remove('on'); const el = document.getElementById(s.dataset.to); if (el) el.scrollIntoView({block:'start'}); return; }
   if (e.target.id === 'sheet') $('#sheet').classList.remove('on');
 });
-$('#back').onclick = toHome;
+$('#back').onclick = () => toHome({nav: true});
 $('#lst').onclick = openSheet;
 const SIZES = [16, 18, 20];
 let si = Math.max(0, SIZES.indexOf(+store.get(NS + '.fs') || 16));
@@ -379,7 +383,10 @@ document.addEventListener('click', e => {
   const fb = () => { msg.textContent = '복사가 막혀 있습니다. 아래 글을 직접 복사하세요.'; const ta = document.createElement('textarea'); ta.value = txt; ta.style.cssText = 'width:100%;height:160px;margin-top:8px'; msg.after(ta); ta.select(); };
   try{ navigator.clipboard.writeText(txt).then(()=> msg.textContent = '복사했습니다. 메모나 대화창에 붙여 넣으세요.', fb); }catch(x){ fb(); }
 });
+let lastH = null;
 function route(){
+  if (location.hash === lastH && lastH !== null) return;
+  lastH = location.hash;
   const h = decodeURIComponent(location.hash.slice(1));
   let m = h.match(/^p(\d+)$/);          // 예전 주소 #p3 = 전체 분석 3부
   if (m){ const i = idxOf('p' + m[1]); if (i >= 0) return go(i, {keep: true}); }
@@ -391,6 +398,7 @@ function route(){
   toHome();
 }
 route();
+window.addEventListener('popstate', route);
 window.addEventListener('hashchange', route);
 </script>
 </body>
